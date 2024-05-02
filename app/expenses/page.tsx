@@ -5,10 +5,8 @@ import {
   Select,
   MenuItem,
   Button,
-  AppBar,
-  Toolbar,
   Typography,
-  Link,
+  InputLabel,
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -26,6 +24,7 @@ const ExpenseForm = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log(10101);
     e.preventDefault();
     try {
       const response = await fetch("/api/expenses", {
@@ -60,11 +59,7 @@ const ExpenseForm = () => {
           Add Daily Expense
         </Typography>
 
-        <FormControl
-          sx={{ m: 1, width: 500 }}
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4">
           <TextField
             type="date"
             name="date"
@@ -74,20 +69,23 @@ const ExpenseForm = () => {
             fullWidth
             className="mt-4"
           />
-          <Select
-            name="category"
-            label="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-            fullWidth
-            input={<OutlinedInput label="Name" />}
-            className="mt-4"
-          >
-            <MenuItem value="food">Food</MenuItem>
-            <MenuItem value="rent">Rent</MenuItem>
-            <MenuItem value="loan">Loan</MenuItem>
-          </Select>
+          <FormControl fullWidth required className="mt-4">
+            <InputLabel>Category</InputLabel>
+            <Select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              input={<OutlinedInput label="Name" />}
+              required
+            >
+              <MenuItem value="" disabled>
+                Select Category
+              </MenuItem>
+              <MenuItem value="food">Food</MenuItem>
+              <MenuItem value="rent">Rent</MenuItem>
+              <MenuItem value="loan">Loan</MenuItem>
+            </Select>
+          </FormControl>
 
           <TextField
             label="Amount"
@@ -105,6 +103,7 @@ const ExpenseForm = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
+            required
             fullWidth
             className="mt-4"
           />
@@ -113,11 +112,11 @@ const ExpenseForm = () => {
             type="submit"
             variant="contained"
             color="primary"
-            className="mt-6"
+            className="mt-6 w-full h-12"
           >
             Submit
           </Button>
-        </FormControl>
+        </form>
       </div>
     </div>
   );
