@@ -9,68 +9,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  email           String           @unique
-  name            String?
-  password        String
-  accounts        Account[]
-  transactions    Transaction[]
-  budgets         Budget[]
-  savingsGoals    SavingsGoal[]
-  investmentGoals InvestmentGoal[]
-}
-
-model Account {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String        @db.ObjectId
-  user        User          @relation(fields: [userId], references: [id])
-  name        String
-  type        String
-  balance     Float
-  currency    String
-  institution String
-  Transaction Transaction[]
-}
-
 model Transaction {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String?  @db.ObjectId
-  user        User?    @relation(fields: [userId], references: [id])
-  accountId   String?  @db.ObjectId
-  account     Account? @relation(fields: [accountId], references: [id])
   date        DateTime
   amount      Float
   category    String
   description String?
-}
-
-model Budget {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id])
-  name      String
-  amount    Float
-  startDate DateTime
-  endDate   DateTime
-}
-
-model SavingsGoal {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String   @db.ObjectId
-  user          User     @relation(fields: [userId], references: [id])
-  name          String
-  targetAmount  Float
-  currentAmount Float
-  targetDate    DateTime
-}
-
-model InvestmentGoal {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String   @db.ObjectId
-  user          User     @relation(fields: [userId], references: [id])
-  name          String
-  targetAmount  Float
-  currentAmount Float
-  targetDate    DateTime
 }
