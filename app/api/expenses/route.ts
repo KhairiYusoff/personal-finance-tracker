@@ -47,10 +47,15 @@ export async function POST(request: NextRequest) {
 
 // PUT /api/expenses/:id
 export async function PUT(request: NextRequest) {
-  try {
-    const expenseId = new URL(request.url).pathname.split("/").pop();
-    const { date, category, amount, description } = await request.json();
+  const { searchParams } = new URL(request.url);
+  const expenseId = searchParams.get("id");
 
+  if (!expenseId) {
+    return NextResponse.json({ error: "Missing expense ID" }, { status: 400 });
+  }
+
+  try {
+    const { date, category, amount, description } = await request.json();
     const updatedExpense = await prisma.transaction.update({
       where: { id: expenseId },
       data: {
@@ -60,12 +65,11 @@ export async function PUT(request: NextRequest) {
         description,
       },
     });
-
-    return NextResponse.json(updatedExpense, { status: 200 });
+    return NextResponse.json(updatedExpense);
   } catch (error) {
     console.error("Error updating expense:", error);
     return NextResponse.json(
-      { error: "An error occurred while updating the expense." },
+      { error: "Error updating expense" },
       { status: 500 }
     );
   }
@@ -73,18 +77,22 @@ export async function PUT(request: NextRequest) {
 
 // DELETE /api/expenses/:id
 export async function DELETE(request: NextRequest) {
-  try {
-    const expenseId = new URL(request.url).pathname.split("/").pop();
+  const { searchParams } = new URL(request.url);
+  const expenseId = searchParams.get("id");
 
+  if (!expenseId) {
+    return NextResponse.json({ error: "Missing expense ID" }, { status: 400 });
+  }
+
+  try {
     const deletedExpense = await prisma.transaction.delete({
       where: { id: expenseId },
     });
-
-    return NextResponse.json(deletedExpense, { status: 200 });
+    return NextResponse.json(deletedExpense);
   } catch (error) {
     console.error("Error deleting expense:", error);
     return NextResponse.json(
-      { error: "An error occurred while deleting the expense." },
+      { error: "Error deleting expense" },
       { status: 500 }
     );
   }

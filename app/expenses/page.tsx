@@ -1,125 +1,73 @@
 "use client";
-import { useState } from "react";
-import {
-  TextField,
-  Select,
-  MenuItem,
-  Button,
-  Typography,
-  InputLabel,
-} from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
+import { useState, useEffect } from "react";
+import { Typography, Paper, CircularProgress } from "@mui/material";
+import ExpenseForm from "../components/ExpenseForm";
+import ExpenseList from "../components/ExpenseList";
+import { Expense } from "@/types/types";
 
-const ExpenseForm = () => {
-  const [formData, setFormData] = useState({
-    date: "",
-    category: "",
-    amount: "",
-    description: "",
-  });
+const ExpensePage = () => {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const handleChange = (e: any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    console.log(10101);
-    e.preventDefault();
+  const fetchExpenses = async () => {
     try {
-      const response = await fetch("/api/expenses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        // Reset form data
-        setFormData({
-          date: "",
-          category: "",
-          amount: "",
-          description: "",
-        });
-      } else {
-        // Handle error response
-        console.error("Error creating expense");
-      }
+      const response = await fetch("/api/expenses");
+      const data = await response.json();
+      setExpenses(data);
+      setLoading(false);
     } catch (error) {
-      console.error("Error creating expense:", error);
+      console.error("Error fetching expenses:", error);
+      setLoading(false);
     }
   };
 
+  const handleExpenseAdded = (newExpense: Expense) => {
+    setExpenses([...expenses, newExpense]);
+  };
+
+  const handleExpenseUpdated = (updatedExpense: Expense) => {
+    const updatedExpenses = expenses.map((expense) =>
+      expense.id === updatedExpense.id ? updatedExpense : expense
+    );
+    setExpenses(updatedExpenses);
+  };
+
+  const handleExpenseDeleted = (deletedExpenseId: string) => {
+    const updatedExpenses = expenses.filter(
+      (expense) => expense.id !== deletedExpenseId
+    );
+    setExpenses(updatedExpenses);
+  };
+
   return (
-    <div>
-      <div className="max-w-md mx-auto mt-8">
-        <Typography variant="h4" component="h1" align="center" gutterBottom>
-          Add Daily Expense
-        </Typography>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <TextField
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-            fullWidth
-            className="mt-4"
-          />
-          <FormControl fullWidth required className="mt-4">
-            <InputLabel>Category</InputLabel>
-            <Select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              input={<OutlinedInput label="Name" />}
-              required
-            >
-              <MenuItem value="" disabled>
-                Select Category
-              </MenuItem>
-              <MenuItem value="food">Food</MenuItem>
-              <MenuItem value="rent">Rent</MenuItem>
-              <MenuItem value="loan">Loan</MenuItem>
-            </Select>
-          </FormControl>
-
-          <TextField
-            label="Amount"
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-            required
-            fullWidth
-            className="mt-4"
-          />
-
-          <TextField
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-            fullWidth
-            className="mt-4"
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            className="mt-6 w-full h-12"
-          >
-            Submit
-          </Button>
-        </form>
+    <Paper elevation={3} className="m-4 p-4">
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-4">
+          <Typography variant="h4" component="h1" align="center" gutterBottom>
+            Daily Expenses
+          </Typography>
+          <ExpenseForm onExpenseAdded={handleExpenseAdded} />
+        </div>
+        <div className="w-full">
+          {loading ? (
+            <div className="text-center mt-8">
+              <CircularProgress />
+            </div>
+          ) : (
+            <ExpenseList
+              expenses={expenses}
+              onExpenseUpdated={handleExpenseUpdated}
+              onExpenseDeleted={handleExpenseDeleted}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </Paper>
   );
 };
 
-export default ExpenseForm;
+export default ExpensePage;
