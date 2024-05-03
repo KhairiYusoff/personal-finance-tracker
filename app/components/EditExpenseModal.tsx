@@ -7,6 +7,11 @@ import {
   TextField,
   Button,
   CircularProgress,
+  Select,
+  InputLabel,
+  FormControl,
+  MenuItem,
+  OutlinedInput,
 } from "@mui/material";
 import { Expense } from "@/types/types";
 
@@ -42,7 +47,7 @@ const EditExpenseModal = ({
     }
   }, [expense]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -85,14 +90,33 @@ const EditExpenseModal = ({
               fullWidth
               margin="normal"
             />
-            <TextField
-              label="Category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Category</InputLabel>
+              <Select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                input={<OutlinedInput label="Name" />}
+                required
+              >
+                <MenuItem value="" disabled>
+                  Select Category
+                </MenuItem>
+                <MenuItem value="Food">Food</MenuItem>
+                <MenuItem value="Rent">Rent</MenuItem>
+                <MenuItem value="Loan">Loan</MenuItem>
+                <MenuItem value="Transportation">Transportation</MenuItem>
+                <MenuItem value="Utilities">Utilities</MenuItem>
+                <MenuItem value="Entertainment">Entertainment</MenuItem>
+                <MenuItem value="Shopping">Shopping</MenuItem>
+                <MenuItem value="Health">Health</MenuItem>
+                <MenuItem value="Education">Education</MenuItem>
+                <MenuItem value="Travel">Travel</MenuItem>
+                <MenuItem value="Groceries">Groceries</MenuItem>
+                <MenuItem value="Subscription">Subscription</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               label="Amount"
               type="number"
