@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -30,6 +30,17 @@ const EditExpenseModal = ({
     description: expense?.description || "",
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (expense) {
+      setFormData({
+        date: new Date(expense.date).toISOString().split("T")[0],
+        category: expense.category,
+        amount: expense.amount.toString(),
+        description: expense.description || "",
+      });
+    }
+  }, [expense]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

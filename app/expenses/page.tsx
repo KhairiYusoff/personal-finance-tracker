@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Typography, Paper, CircularProgress } from "@mui/material";
 import ExpenseForm from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
+import ExpenseTable from "../components/ExpenseTable";
 import { Expense } from "@/types/types";
 
 const ExpensePage = () => {
@@ -58,7 +59,7 @@ const ExpensePage = () => {
               <CircularProgress />
             </div>
           ) : (
-            <ExpenseList
+            <ExpenseTable
               expenses={expenses}
               onExpenseUpdated={handleExpenseUpdated}
               onExpenseDeleted={handleExpenseDeleted}
