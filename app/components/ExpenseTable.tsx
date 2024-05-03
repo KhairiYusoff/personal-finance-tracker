@@ -76,7 +76,7 @@ const ExpenseTable = ({
           {expenses.map((expense) => (
             <TableRow key={expense.id}>
               <TableCell align="center">
-                {format(new Date(expense.date), "yyyy-MM-dd")}
+                {format(new Date(expense.date), "dd-MM-yyyy")}
               </TableCell>
               <TableCell align="center">{expense.category}</TableCell>
               <TableCell align="center">{expense.description}</TableCell>
