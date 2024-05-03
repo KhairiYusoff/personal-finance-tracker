@@ -82,9 +82,19 @@ const ExpenseForm = ({ onExpenseAdded }: ExpenseFormProps) => {
             <MenuItem value="" disabled>
               Select Category
             </MenuItem>
-            <MenuItem value="food">Food</MenuItem>
-            <MenuItem value="rent">Rent</MenuItem>
-            <MenuItem value="loan">Loan</MenuItem>
+            <MenuItem value="Food">Food</MenuItem>
+            <MenuItem value="Rent">Rent</MenuItem>
+            <MenuItem value="Loan">Loan</MenuItem>
+            <MenuItem value="Transportation">Transportation</MenuItem>
+            <MenuItem value="Utilities">Utilities</MenuItem>
+            <MenuItem value="Entertainment">Entertainment</MenuItem>
+            <MenuItem value="Shopping">Shopping</MenuItem>
+            <MenuItem value="Health">Health</MenuItem>
+            <MenuItem value="Education">Education</MenuItem>
+            <MenuItem value="Travel">Travel</MenuItem>
+            <MenuItem value="Groceries">Groceries</MenuItem>
+            <MenuItem value="Subscription">Subscription</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
           </Select>
         </FormControl>
 
