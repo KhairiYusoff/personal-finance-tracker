@@ -1,7 +1,16 @@
-// components/ExpenseDashboard.tsx
 "use client";
 import { useState, useEffect } from "react";
-import { Typography, CircularProgress, Paper, Grid } from "@mui/material";
+import {
+  Typography,
+  CircularProgress,
+  Paper,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
+} from "@mui/material";
 import { Expense } from "@/types/types";
 import { format } from "date-fns";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -9,16 +18,29 @@ import { Pie } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface ExpenseDashboardProps {
-  expenses: Expense[];
-}
-
-const Expenses = ({ expenses }: ExpenseDashboardProps) => {
+const Expenses = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState<boolean>(true);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  const handleYearChange = (e: any) => {
+    setSelectedYear(e.target.value);
+  };
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await fetch("/api/expenses");
+      const data = await response.json();
+      setExpenses(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setLoading(false);
+    fetchExpenses();
   }, []);
 
   const getMonthlyExpenses = (year: number) => {
@@ -78,10 +100,10 @@ const Expenses = ({ expenses }: ExpenseDashboardProps) => {
           <Typography variant="subtitle1" align="center" gutterBottom>
             {month}
           </Typography>
-          <div className="w-full h-64">
+          <div className="w-full h-64 flex justify-center">
             <Pie data={data} />
           </div>
-          <Typography variant="subtitle2" align="center">
+          <Typography variant="subtitle2" align="center" className="mt-2">
             Total: ${totalAmount.toFixed(2)}
           </Typography>
         </Paper>
@@ -113,7 +135,24 @@ const Expenses = ({ expenses }: ExpenseDashboardProps) => {
 
   return (
     <Paper elevation={3} className="p-4">
-      <Typography variant="h5" align="center" gutterBottom>
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Select Year</InputLabel>
+        <Select
+          value={selectedYear}
+          input={<OutlinedInput label="Select Year" />}
+          onChange={handleYearChange}
+        >
+          {Array.from(
+            { length: 10 },
+            (_, i) => new Date().getFullYear() - i
+          ).map((year) => (
+            <MenuItem key={year} value={year}>
+              {year}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Typography variant="h5" align="center" gutterBottom className="my-8">
         Expense Summary for {selectedYear}
       </Typography>
       {loading ? (

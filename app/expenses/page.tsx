@@ -10,14 +10,11 @@ const ExpensePage = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
-
   const fetchExpenses = async () => {
     try {
       const response = await fetch("/api/expenses");
       const data = await response.json();
+      console.log(data);
       setExpenses(data);
       setLoading(false);
     } catch (error) {
@@ -25,6 +22,10 @@ const ExpensePage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
 
   const handleExpenseAdded = (newExpense: Expense) => {
     setExpenses([...expenses, newExpense]);
