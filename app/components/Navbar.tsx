@@ -1,5 +1,6 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Link } from "@mui/material";
+import SignInButton from "./SignInButton";
 
 const Navbar = () => {
   return (
@@ -21,6 +22,7 @@ const Navbar = () => {
           <Link href="/reports" color="inherit">
             Reports
           </Link>
+          <SignInButton />
         </Toolbar>
       </AppBar>
     </div>
