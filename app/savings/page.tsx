@@ -1,31 +1,41 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Grid, Typography, Paper, Button, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  Paper,
+  Button,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import IncomeForm from "../components/Income/IncomeForm";
 import SavingsGoalForm from "../components/Savings/SavingsGoalForm";
 import { Expense, Income, SavingsGoal } from "@/types/types";
+import { useUser } from "@clerk/nextjs";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const currentYear = new Date().getFullYear();
 
 const Savings = () => {
+  const { isLoaded, isSignedIn } = useUser();
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [savingsGoal, setSavingsGoal] = useState<SavingsGoal | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
   useEffect(() => {
-
     const fetchData = async () => {
       try {
-        const [incomeResponse, savingsResponse, expenseResponse] = await Promise.all([
-          fetch(`/api/income/${selectedYear}`),
-          fetch("/api/savings/latest"),
-          fetch(`/api/expenses/${selectedYear}`),
-        ]);
+        const [incomeResponse, savingsResponse, expenseResponse] =
+          await Promise.all([
+            fetch(`/api/income/${selectedYear}`),
+            fetch("/api/savings/latest"),
+            fetch(`/api/expenses/${selectedYear}`),
+          ]);
 
         if (incomeResponse.ok && savingsResponse.ok && expenseResponse.ok) {
           const incomeData = await incomeResponse.json();
@@ -56,9 +66,14 @@ const Savings = () => {
   };
 
   const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const totalExpenses = expenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0
+  );
   const netIncome = totalIncome - totalExpenses;
-  const savingsProgress = savingsGoal ? (savingsGoal.currentAmount / savingsGoal.targetAmount) * 100 : 0;
+  const savingsProgress = savingsGoal
+    ? (savingsGoal.currentAmount / savingsGoal.targetAmount) * 100
+    : 0;
 
   const renderIncomeChart = () => {
     const incomeSourceRevenue: { [key: string]: number } = {};
@@ -120,6 +135,14 @@ const Savings = () => {
     return <Pie data={data} />;
   };
 
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isSignedIn) {
+    return <div>Please sign in to access this page.</div>;
+  }
+
   return (
     <Box m={4}>
       <Typography variant="h4" align="center" gutterBottom>
@@ -157,7 +180,9 @@ const Savings = () => {
                 <Typography variant="h6" gutterBottom>
                   Income Breakdown
                 </Typography>
-                <Box sx={{ width: "100%", height: 300 }}>{renderIncomeChart()}</Box>
+                <Box sx={{ width: "100%", height: 300 }}>
+                  {renderIncomeChart()}
+                </Box>
               </Paper>
             </Grid>
             <Grid item xs={12}>
@@ -165,7 +190,9 @@ const Savings = () => {
                 <Typography variant="h6" gutterBottom>
                   Expense Breakdown
                 </Typography>
-                <Box sx={{ width: "100%", height: 300 }}>{renderExpenseChart()}</Box>
+                <Box sx={{ width: "100%", height: 300 }}>
+                  {renderExpenseChart()}
+                </Box>
               </Paper>
             </Grid>
           </Grid>
@@ -183,7 +210,9 @@ const Savings = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle1">Total Expenses</Typography>
-                <Typography variant="h5">${totalExpenses.toFixed(2)}</Typography>
+                <Typography variant="h5">
+                  ${totalExpenses.toFixed(2)}
+                </Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle1">Savings</Typography>
@@ -191,7 +220,9 @@ const Savings = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle1">Savings Progress</Typography>
-                <Typography variant="h5">{savingsProgress.toFixed(2)}%</Typography>
+                <Typography variant="h5">
+                  {savingsProgress.toFixed(2)}%
+                </Typography>
               </Grid>
             </Grid>
           </Paper>
@@ -206,11 +237,13 @@ const Savings = () => {
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
             >
-              {Array.from({ length: 5 }, (_, i) => currentYear - i).map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
+              {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
+                (year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                )
+              )}
             </Select>
           </Paper>
         </Grid>

@@ -5,8 +5,10 @@ import ExpenseForm from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
 import ExpenseTable from "../components/ExpenseTable";
 import { Expense } from "@/types/types";
+import { useUser } from "@clerk/nextjs";
 
 const ExpensePage = () => {
+  const { isLoaded, isSignedIn } = useUser();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -44,6 +46,14 @@ const ExpensePage = () => {
     );
     setExpenses(updatedExpenses);
   };
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isSignedIn) {
+    return <div>Please sign in to access this page.</div>;
+  }
 
   return (
     <Paper elevation={3} className="m-4 p-4">
