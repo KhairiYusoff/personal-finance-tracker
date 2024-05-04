@@ -19,7 +19,7 @@ const Navbar = () => {
           <Link href="/savings" color="inherit" sx={{ marginRight: 2 }}>
             Savings
           </Link>
-          <Link href="/reports" color="inherit">
+          <Link href="/reports" color="inherit" sx={{ marginRight: 2 }}>
             Reports
           </Link>
           <SignInButton />

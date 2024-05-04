@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import requireAuth from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest) {
+export const GET = requireAuth(async (request: NextRequest, userId: string) => {
   try {
     const savingsGoal = await prisma.savingsGoal.findFirst({
+      where: {
+        userId,
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -18,4 +22,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import requireAuth from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { year: string } }
-) {
-  const year = params.year;
+export const GET = requireAuth(async (request: NextRequest, userId: string) => {
+  const year = request.nextUrl.searchParams.get("year") as string;
 
   try {
     const expenses = await prisma.transaction.findMany({
@@ -16,6 +14,7 @@ export async function GET(
           gte: new Date(`${year}-01-01`),
           lt: new Date(`${Number(year) + 1}-01-01`),
         },
+        userId,
       },
     });
     return NextResponse.json(expenses, { status: 200 });
@@ -26,4 +25,4 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+});
