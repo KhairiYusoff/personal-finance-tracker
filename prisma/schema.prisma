@@ -16,3 +16,18 @@ model Transaction {
   category    String
   description String?
 }
+
+model Income {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  date        DateTime
+  amount      Float
+  source      String
+  description String?
+}
+
+model SavingsGoal {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  targetAmount  Float
+  currentAmount Float   @default(0)
+  description   String?
+}

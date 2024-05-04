@@ -15,8 +15,8 @@ const Navbar = () => {
           <Link href="/expenses" color="inherit" sx={{ marginRight: 2 }}>
             Expenses
           </Link>
-          <Link href="/budgets" color="inherit" sx={{ marginRight: 2 }}>
-            Budgets
+          <Link href="/savings" color="inherit" sx={{ marginRight: 2 }}>
+            Savings
           </Link>
           <Link href="/reports" color="inherit">
             Reports

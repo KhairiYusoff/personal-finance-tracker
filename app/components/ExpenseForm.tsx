@@ -76,7 +76,7 @@ const ExpenseForm = ({ onExpenseAdded }: ExpenseFormProps) => {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            input={<OutlinedInput label="Name" />}
+            input={<OutlinedInput label="Category" />}
             required
           >
             <MenuItem value="" disabled>
