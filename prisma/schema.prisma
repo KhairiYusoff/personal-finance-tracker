@@ -28,6 +28,7 @@ model Income {
 model SavingsGoal {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
   targetAmount  Float
-  currentAmount Float   @default(0)
+  currentAmount Float 
   description   String?
+  createdAt     DateTime?
 }
