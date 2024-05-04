@@ -5,31 +5,9 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import IncomeForm from "../components/Income/IncomeForm";
 import SavingsGoalForm from "../components/Savings/SavingsGoalForm";
+import { Expense, Income, SavingsGoal } from "@/types/types";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-interface Income {
-  id: string;
-  date: string;
-  amount: number;
-  source: string;
-  description: string;
-}
-
-interface SavingsGoal {
-  id: string;
-  targetAmount: number;
-  currentAmount: number;
-  description: string;
-}
-
-interface Expense {
-  id: string;
-  date: string;
-  amount: number;
-  category: string;
-  description: string;
-}
 
 const currentYear = new Date().getFullYear();
 
@@ -82,6 +60,36 @@ const Savings = () => {
   const netIncome = totalIncome - totalExpenses;
   const savingsProgress = savingsGoal ? (savingsGoal.currentAmount / savingsGoal.targetAmount) * 100 : 0;
 
+  const renderIncomeChart = () => {
+    const incomeSourceRevenue: { [key: string]: number } = {};
+    incomes.forEach((income) => {
+      if (incomeSourceRevenue[income.source]) {
+        incomeSourceRevenue[income.source] += income.amount;
+      } else {
+        incomeSourceRevenue[income.source] = income.amount;
+      }
+    });
+
+    const data = {
+      labels: Object.keys(incomeSourceRevenue),
+      datasets: [
+        {
+          data: Object.values(incomeSourceRevenue),
+          backgroundColor: [
+            "#FF6384",
+            "#36A2EB",
+            "#FFCE56",
+            "#4BC0C0",
+            "#9966FF",
+            "#FF9F40",
+          ],
+        },
+      ],
+    };
+
+    return <Pie data={data} />;
+  };
+
   const renderExpenseChart = () => {
     const categoryExpenses: { [key: string]: number } = {};
     expenses.forEach((expense) => {
@@ -119,31 +127,48 @@ const Savings = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Income
-            </Typography>
-            <IncomeForm onIncomeAdded={handleIncomeAdded} />
-          </Paper>
+        {/* Left Side: Forms */}
+        <Grid item xs={12} md={6}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Income
+                </Typography>
+                <IncomeForm onIncomeAdded={handleIncomeAdded} />
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Savings Goal
+                </Typography>
+                <SavingsGoalForm onSavingsGoalAdded={handleSavingsGoalAdded} />
+              </Paper>
+            </Grid>
+          </Grid>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Savings Goal
-            </Typography>
-            <SavingsGoalForm onSavingsGoalAdded={handleSavingsGoalAdded} />
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Expense Breakdown
-            </Typography>
-            <Box sx={{ width: "100%", height: 300 }}>{renderExpenseChart()}</Box>
-          </Paper>
+        {/* Right Side: Charts */}
+        <Grid item xs={12} md={6}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Income Breakdown
+                </Typography>
+                <Box sx={{ width: "100%", height: 300 }}>{renderIncomeChart()}</Box>
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Expense Breakdown
+                </Typography>
+                <Box sx={{ width: "100%", height: 300 }}>{renderExpenseChart()}</Box>
+              </Paper>
+            </Grid>
+          </Grid>
         </Grid>
 
         <Grid item xs={12}>

@@ -5,3 +5,18 @@ export interface Expense {
   amount: number;
   description?: string;
 }
+
+export interface Income {
+  id: string;
+  date: string;
+  amount: number;
+  source: string;
+  description: string;
+}
+
+export interface SavingsGoal {
+  id: string;
+  targetAmount: number;
+  currentAmount: number;
+  description: string;
+}
