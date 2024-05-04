@@ -161,7 +161,7 @@ const Savings = () => {
                 <Typography variant="h5">${totalExpenses.toFixed(2)}</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <Typography variant="subtitle1">Net Income</Typography>
+                <Typography variant="subtitle1">Savings</Typography>
                 <Typography variant="h5">${netIncome.toFixed(2)}</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
