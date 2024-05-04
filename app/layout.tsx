@@ -26,10 +26,7 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <Navbar />
-          <SignedIn>{children}</SignedIn>
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
+          {children}
         </body>
       </html>
     </ClerkProvider>
