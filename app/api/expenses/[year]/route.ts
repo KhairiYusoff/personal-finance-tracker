@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const year = searchParams.get("year");
-  console.log("TEST");
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { year: string } }
+) {
+  const year = params.year;
+
   try {
     const expenses = await prisma.transaction.findMany({
       where: {

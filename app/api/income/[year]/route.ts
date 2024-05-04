@@ -3,9 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const year = searchParams.get("year");
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { year: string } }
+) {
+  const year = params.year;
 
   try {
     const incomes = await prisma.income.findMany({
