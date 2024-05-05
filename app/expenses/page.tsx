@@ -11,6 +11,7 @@ const ExpensePage = () => {
   const { isLoaded, isSignedIn } = useUser();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  console.log(isSignedIn);
 
   const fetchExpenses = async () => {
     try {

@@ -1,3 +1,5 @@
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+
 export interface Expense {
   id: string;
   date: string;
@@ -20,3 +22,5 @@ export interface SavingsGoal {
   currentAmount: number;
   description: string;
 }
+
+export type DocumentDefinition = TDocumentDefinitions;

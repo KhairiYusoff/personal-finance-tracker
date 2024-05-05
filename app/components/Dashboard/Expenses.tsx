@@ -22,6 +22,7 @@ const Expenses = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState<boolean>(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  console.log(expenses);
 
   const handleYearChange = (e: any) => {
     setSelectedYear(e.target.value);
