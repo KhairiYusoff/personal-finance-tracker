@@ -1,13 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
+import { error } from "console";
 
 const prisma = new PrismaClient();
 
 // GET /api/expenses
 export async function GET(request: NextRequest) {
   try {
-    const expenses = await prisma.transaction.findMany();
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json(
+        {
+          error: "You must be signed in to access expenses",
+        },
+        { status: 401 }
+      );
+    }
+    const expenses = await prisma.transaction.findMany({
+      where: {
+        user: {
+          clerkUserId: userId,
+        },
+      },
+    });
     return NextResponse.json(expenses, { status: 200 });
   } catch (error) {
     console.error("Error retrieving expenses:", error);
