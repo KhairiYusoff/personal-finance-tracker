@@ -67,15 +67,37 @@ export async function PUT(request: NextRequest) {
 
   try {
     const { date, category, amount, description } = await request.json();
+    const { userId } = auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to update an expense." },
+        { status: 401 }
+      );
+    }
+
     const updatedExpense = await prisma.transaction.update({
-      where: { id: expenseId },
+      where: {
+        id: expenseId,
+      },
       data: {
         date: new Date(date),
         category,
         amount: parseFloat(amount),
         description,
+        user: {
+          connectOrCreate: {
+            where: {
+              clerkUserId: userId || undefined, // Use the clerkUserId field to uniquely identify the user
+            },
+            create: {
+              clerkUserId: userId || "", // Create a new user if it doesn't exist
+            },
+          },
+        },
       },
     });
+
     return NextResponse.json(updatedExpense);
   } catch (error) {
     console.error("Error updating expense:", error);
