@@ -118,9 +118,24 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
+    const { userId } = auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to delete an expense." },
+        { status: 401 }
+      );
+    }
+
     const deletedExpense = await prisma.transaction.delete({
-      where: { id: expenseId },
+      where: {
+        id: expenseId,
+        user: {
+          clerkUserId: userId,
+        },
+      },
     });
+
     return NextResponse.json(deletedExpense);
   } catch (error) {
     console.error("Error deleting expense:", error);
