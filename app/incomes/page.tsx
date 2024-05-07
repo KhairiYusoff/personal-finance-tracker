@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Paper, Typography, Grid } from "@mui/material";
+import { Box, Paper, Typography, Grid, CircularProgress } from "@mui/material";
 import IncomeForm from "../components/Income/IncomeForm";
 import { Income } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
@@ -9,6 +9,7 @@ import IncomeTable from "../components/Income/IncomeTable";
 const IncomesPage = () => {
   const { isLoaded, isSignedIn } = useUser();
   const [incomes, setIncomes] = useState<Income[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchIncomes = async () => {
@@ -16,8 +17,10 @@ const IncomesPage = () => {
         const response = await fetch("/api/income");
         const data = await response.json();
         setIncomes(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching incomes:", error);
+        setLoading(false);
       }
     };
 
@@ -48,9 +51,15 @@ const IncomesPage = () => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <IncomeTable incomes={incomes} />
-          </Paper>
+          {loading ? (
+            <div className="text-center mt-8">
+              <CircularProgress />
+            </div>
+          ) : (
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <IncomeTable incomes={incomes} />
+            </Paper>
+          )}
         </Grid>
       </Grid>
     </Box>
