@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Paper, Typography, Button } from "@mui/material";
+import { Box, Paper, Typography, Grid } from "@mui/material";
 import IncomeForm from "../components/Income/IncomeForm";
 import { Income } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
@@ -38,15 +38,21 @@ const IncomesPage = () => {
 
   return (
     <Box m={4}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Income
-      </Typography>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <IncomeForm onIncomeAdded={handleIncomeAdded} />
-      </Paper>
-      <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
-        <IncomeTable incomes={incomes} />
-      </Paper>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={4}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Add Income
+          </Typography>
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <IncomeForm onIncomeAdded={handleIncomeAdded} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={8}>
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <IncomeTable incomes={incomes} />
+          </Paper>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

@@ -9,6 +9,7 @@ import {
   Select,
   InputLabel,
   OutlinedInput,
+  CircularProgress,
 } from "@mui/material";
 
 interface IncomeFormProps {
@@ -22,6 +23,7 @@ const IncomeForm = ({ onIncomeAdded }: IncomeFormProps) => {
     source: "",
     description: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,6 +31,7 @@ const IncomeForm = ({ onIncomeAdded }: IncomeFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await fetch("/api/income", {
         method: "POST",
@@ -48,6 +51,7 @@ const IncomeForm = ({ onIncomeAdded }: IncomeFormProps) => {
     } catch (error) {
       console.error("Error adding income:", error);
     }
+    setLoading(false);
   };
 
   return (
@@ -56,7 +60,6 @@ const IncomeForm = ({ onIncomeAdded }: IncomeFormProps) => {
       onSubmit={handleSubmit}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      <Typography variant="h6">Add Income</Typography>
       <TextField
         type="date"
         name="date"
@@ -98,8 +101,13 @@ const IncomeForm = ({ onIncomeAdded }: IncomeFormProps) => {
         label="Description"
         required
       />
-      <Button type="submit" variant="contained">
-        Add Income
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        className="mt-6 w-full h-12"
+      >
+        {loading ? <CircularProgress size={24} /> : " Add Income"}
       </Button>
     </Box>
   );
