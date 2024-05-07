@@ -23,7 +23,7 @@ const IncomeForm = ({ onIncomeAdded }: IncomeFormProps) => {
     description: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 

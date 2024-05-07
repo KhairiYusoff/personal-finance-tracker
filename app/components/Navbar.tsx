@@ -16,6 +16,14 @@ const Navbar = () => {
           </Button>
           <Button
             component={Link}
+            href="/incomes"
+            color="inherit"
+            sx={{ mr: 2 }}
+          >
+            Incomes
+          </Button>
+          <Button
+            component={Link}
             href="/expenses"
             color="inherit"
             sx={{ mr: 2 }}

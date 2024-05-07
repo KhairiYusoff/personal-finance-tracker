@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Typography, Paper, CircularProgress } from "@mui/material";
-import ExpenseForm from "../components/ExpenseForm";
-import ExpenseList from "../components/ExpenseList";
-import ExpenseTable from "../components/ExpenseTable";
+import ExpenseForm from "../components/Expenses/ExpenseForm";
+import ExpenseList from "../components/Expenses/ExpenseList";
+import ExpenseTable from "../components/Expenses/ExpenseTable";
 import { Expense } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
 

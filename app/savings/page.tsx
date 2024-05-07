@@ -151,7 +151,7 @@ const Savings = () => {
 
       <Grid container spacing={3}>
         {/* Left Side: Forms */}
-        <Grid item xs={12} md={6}>
+        {/* <Grid item xs={12} md={6}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Paper elevation={3} sx={{ p: 3 }}>
@@ -170,7 +170,7 @@ const Savings = () => {
               </Paper>
             </Grid>
           </Grid>
-        </Grid>
+        </Grid> */}
 
         {/* Right Side: Charts */}
         <Grid item xs={12} md={6}>
