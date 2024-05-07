@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
+import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const { date, category, amount, description } = await request.json();
+    const { userId } = auth(); // Get the auth data
 
     const expense = await prisma.transaction.create({
       data: {
@@ -30,6 +31,16 @@ export async function POST(request: NextRequest) {
         category,
         amount: parseFloat(amount),
         description,
+        user: {
+          connectOrCreate: {
+            where: {
+              clerkUserId: userId || undefined,
+            },
+            create: {
+              clerkUserId: userId || "",
+            },
+          },
+        },
       },
     });
 

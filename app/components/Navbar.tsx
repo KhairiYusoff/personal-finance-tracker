@@ -1,6 +1,6 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 const Navbar = () => {
@@ -30,9 +30,15 @@ const Navbar = () => {
           >
             Savings
           </Button>
-          <Button component={Link} href="/reports" color="inherit">
+          <Button
+            component={Link}
+            href="/reports"
+            color="inherit"
+            sx={{ mr: 2 }}
+          >
             Reports
           </Button>
+          <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
           <Button
