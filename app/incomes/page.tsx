@@ -16,6 +16,7 @@ const IncomesPage = () => {
       try {
         const response = await fetch("/api/income");
         const data = await response.json();
+        console.log(data);
         setIncomes(data);
         setLoading(false);
       } catch (error) {
@@ -32,11 +33,19 @@ const IncomesPage = () => {
   };
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col h-[80vh] justify-center items-center">
+        <CircularProgress />
+      </div>
+    );
   }
 
   if (!isSignedIn) {
-    return <div>Please sign in to access this page.</div>;
+    return (
+      <div className="flex flex-col h-[80vh] justify-center items-center">
+        Please sign in to access this page.
+      </div>
+    );
   }
 
   return (

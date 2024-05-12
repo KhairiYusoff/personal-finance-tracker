@@ -49,11 +49,19 @@ const ExpensePage = () => {
   };
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col h-[80vh] justify-center items-center">
+        <CircularProgress />
+      </div>
+    );
   }
 
   if (!isSignedIn) {
-    return <div>Please sign in to access this page.</div>;
+    return (
+      <div className="flex flex-col h-[80vh] justify-center items-center">
+        Please sign in to access this page.
+      </div>
+    );
   }
 
   return (
