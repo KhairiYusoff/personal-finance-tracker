@@ -13,39 +13,39 @@ import {
   MenuItem,
   OutlinedInput,
 } from "@mui/material";
-import { Expense } from "@/types/types";
+import { Income } from "@/types/types";
 
-interface EditExpenseModalProps {
-  expense: Expense | null;
+interface EditIncomeModalProps {
+  income: Income | null;
   open: boolean;
   onClose: () => void;
-  onSubmit: (updatedExpense: Expense) => void;
+  onSubmit: (updatedIncome: Income) => void;
 }
 
-const EditExpenseModal = ({
-  expense,
+const EditIncomeModal = ({
+  income,
   open,
   onClose,
   onSubmit,
-}: EditExpenseModalProps) => {
+}: EditIncomeModalProps) => {
   const [formData, setFormData] = useState({
-    date: expense?.date || "",
-    category: expense?.category || "",
-    amount: expense?.amount.toString() || "",
-    description: expense?.description || "",
+    date: income?.date || "",
+    source: income?.source || "",
+    amount: income?.amount?.toString() || "",
+    description: income?.description || "",
   });
   const [loading, setLoading] = useState(false);
-  console.log(expense);
+  console.log(income);
   useEffect(() => {
-    if (expense) {
+    if (income) {
       setFormData({
-        date: new Date(expense.date).toISOString().split("T")[0],
-        category: expense.category,
-        amount: expense.amount.toString(),
-        description: expense.description || "",
+        date: new Date(income.date).toISOString().split("T")[0],
+        source: income.source,
+        amount: income.amount.toString(),
+        description: income.description || "",
       });
     }
-  }, [expense]);
+  }, [income]);
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,7 +55,7 @@ const EditExpenseModal = ({
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`/api/expenses?id=${expense?.id}`, {
+      const response = await fetch(`/api/income?id=${income?.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -64,23 +64,23 @@ const EditExpenseModal = ({
       });
 
       if (response.ok) {
-        const updatedExpense = await response.json();
-        onSubmit(updatedExpense);
+        const updatedIncome = await response.json();
+        onSubmit(updatedIncome);
         onClose();
       } else {
-        console.error("Error updating expense");
+        console.error("Error updating income");
       }
     } catch (error) {
-      console.error("Error updating expense:", error);
+      console.error("Error updating income:", error);
     }
     setLoading(false);
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Expense</DialogTitle>
+      <DialogTitle>Edit Income</DialogTitle>
       <DialogContent>
-        {expense && (
+        {income && (
           <form onSubmit={handleSubmit}>
             <TextField
               type="date"
@@ -91,29 +91,21 @@ const EditExpenseModal = ({
               margin="normal"
             />
             <FormControl fullWidth margin="normal">
-              <InputLabel>Category</InputLabel>
+              <InputLabel>Source</InputLabel>
               <Select
-                name="category"
-                value={formData.category}
+                name="source"
+                value={formData.source}
                 onChange={handleChange}
-                input={<OutlinedInput label="Name" />}
+                input={<OutlinedInput label="Source" />}
                 required
               >
                 <MenuItem value="" disabled>
-                  Select Category
+                  Select Source
                 </MenuItem>
-                <MenuItem value="Food">Food</MenuItem>
-                <MenuItem value="Rent">Rent</MenuItem>
-                <MenuItem value="Loan">Loan</MenuItem>
-                <MenuItem value="Transportation">Transportation</MenuItem>
-                <MenuItem value="Utilities">Utilities</MenuItem>
-                <MenuItem value="Entertainment">Entertainment</MenuItem>
-                <MenuItem value="Shopping">Shopping</MenuItem>
-                <MenuItem value="Health">Health</MenuItem>
-                <MenuItem value="Education">Education</MenuItem>
-                <MenuItem value="Travel">Travel</MenuItem>
-                <MenuItem value="Groceries">Groceries</MenuItem>
-                <MenuItem value="Subscription">Subscription</MenuItem>
+                <MenuItem value="Salary">Salary</MenuItem>
+                <MenuItem value="Rental">Rental</MenuItem>
+                <MenuItem value="Business">Business</MenuItem>
+                <MenuItem value="Investment">Investment</MenuItem>
                 <MenuItem value="Other">Other</MenuItem>
               </Select>
             </FormControl>
@@ -153,4 +145,4 @@ const EditExpenseModal = ({
   );
 };
 
-export default EditExpenseModal;
+export default EditIncomeModal;

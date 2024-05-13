@@ -48,6 +48,18 @@ const IncomesPage = () => {
     );
   }
 
+  const handleIncomeUpdated = (updatedIncome: Income) => {
+    setIncomes(
+      incomes.map((income) =>
+        income.id === updatedIncome.id ? updatedIncome : income
+      )
+    );
+  };
+
+  const handleIncomeDeleted = (incomeId: string) => {
+    setIncomes(incomes.filter((income) => income.id !== incomeId));
+  };
+
   return (
     <Box m={4}>
       <Grid container spacing={3}>
@@ -66,7 +78,11 @@ const IncomesPage = () => {
             </div>
           ) : (
             <Paper elevation={3} sx={{ p: 3 }}>
-              <IncomeTable incomes={incomes} />
+              <IncomeTable
+                incomes={incomes}
+                onIncomeUpdated={handleIncomeUpdated}
+                onIncomeDeleted={handleIncomeDeleted}
+              />
             </Paper>
           )}
         </Grid>
