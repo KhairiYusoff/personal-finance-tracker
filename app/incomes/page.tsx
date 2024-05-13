@@ -14,6 +14,7 @@ import { Income } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
 import IncomeTable from "../components/Income/IncomeTable";
 import MonthlyIncomeTab from "../components/Income/MonthlyIncomeTab";
+import YTDIncomeTab from "../components/Income/YTDIncomeTab";
 
 const IncomesPage = () => {
   const { isLoaded, isSignedIn } = useUser();
@@ -119,8 +120,13 @@ const IncomesPage = () => {
               <Tab label="October" />
               <Tab label="November" />
               <Tab label="December" />
+              <Tab label="YTD" />
             </Tabs>
-            <MonthlyIncomeTab month={selectedTab + 1} incomes={incomes} />
+            {selectedTab === 12 ? (
+              <YTDIncomeTab incomes={incomes} />
+            ) : (
+              <MonthlyIncomeTab month={selectedTab + 1} incomes={incomes} />
+            )}
           </Paper>
         </Grid>
       </Grid>
