@@ -1,4 +1,5 @@
-// app/lib/utils.ts
+import { Income } from "@/types/types";
+
 export const downloadPdfFile = async (pdfBlob: Blob, fileName: string) => {
   if (window.showSaveFilePicker) {
     try {
@@ -48,4 +49,18 @@ export const getMonthName = (month: number) => {
     "December",
   ];
   return monthNames[month - 1];
+};
+
+export const calculatePreviousMonthIncome = (
+  month: number,
+  incomes: Income[]
+) => {
+  const previousMonth = month === 1 ? 12 : month - 1;
+  const previousMonthIncomes = incomes.filter(
+    (income) => new Date(income.date).getMonth() + 1 === previousMonth
+  );
+  return previousMonthIncomes.reduce(
+    (total, income) => total + income.amount,
+    0
+  );
 };
