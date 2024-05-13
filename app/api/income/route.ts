@@ -75,3 +75,93 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// PUT /api/income/:id
+export async function PUT(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const incomeId = searchParams.get("id");
+
+  if (!incomeId) {
+    return NextResponse.json({ error: "Missing income ID" }, { status: 400 });
+  }
+
+  try {
+    const { date, amount, source, description } = await request.json();
+    const { userId } = auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to update an income." },
+        { status: 401 }
+      );
+    }
+
+    const updatedIncome = await prisma.income.update({
+      where: {
+        id: incomeId,
+      },
+      data: {
+        date: new Date(date),
+        source,
+        amount: parseFloat(amount),
+        description,
+        user: {
+          connectOrCreate: {
+            where: {
+              clerkUserId: userId || undefined,
+            },
+            create: {
+              clerkUserId: userId || "",
+            },
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(updatedIncome);
+  } catch (error) {
+    console.error("Error updating income:", error);
+    return NextResponse.json(
+      { error: "Error updating income" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/income/:id
+export async function DELETE(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const incomeId = searchParams.get("id");
+
+  if (!incomeId) {
+    return NextResponse.json({ error: "Missing income ID" }, { status: 400 });
+  }
+
+  try {
+    const { userId } = auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You must be signed in to delete an income." },
+        { status: 401 }
+      );
+    }
+
+    const deletedIncome = await prisma.income.delete({
+      where: {
+        id: incomeId,
+        user: {
+          clerkUserId: userId,
+        },
+      },
+    });
+
+    return NextResponse.json(deletedIncome);
+  } catch (error) {
+    console.error("Error deleting income:", error);
+    return NextResponse.json(
+      { error: "Error deleting income" },
+      { status: 500 }
+    );
+  }
+}
