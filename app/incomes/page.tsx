@@ -1,15 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Paper, Typography, Grid, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  CircularProgress,
+  Tabs,
+  Tab,
+} from "@mui/material";
 import IncomeForm from "../components/Income/IncomeForm";
 import { Income } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
 import IncomeTable from "../components/Income/IncomeTable";
+import MonthlyIncomeTab from "../components/Income/MonthlyIncomeTab";
 
 const IncomesPage = () => {
   const { isLoaded, isSignedIn } = useUser();
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
     const fetchIncomes = async () => {
@@ -60,6 +70,11 @@ const IncomesPage = () => {
     setIncomes(incomes.filter((income) => income.id !== incomeId));
   };
 
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    console.log(newValue);
+    setSelectedTab(newValue);
+  };
+
   return (
     <Box m={4}>
       <Grid container spacing={3}>
@@ -85,6 +100,28 @@ const IncomesPage = () => {
               />
             </Paper>
           )}
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              Monthly Income
+            </Typography>
+            <Tabs value={selectedTab} onChange={handleTabChange}>
+              <Tab label="January" />
+              <Tab label="February" />
+              <Tab label="March" />
+              <Tab label="April" />
+              <Tab label="May" />
+              <Tab label="June" />
+              <Tab label="July" />
+              <Tab label="August" />
+              <Tab label="September" />
+              <Tab label="October" />
+              <Tab label="November" />
+              <Tab label="December" />
+            </Tabs>
+            <MonthlyIncomeTab month={selectedTab + 1} incomes={incomes} />
+          </Paper>
         </Grid>
       </Grid>
     </Box>
