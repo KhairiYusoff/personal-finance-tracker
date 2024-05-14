@@ -1,6 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Typography, Paper, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  CircularProgress,
+  Box,
+  Grid,
+  Tabs,
+  Tab,
+} from "@mui/material";
 import ExpenseForm from "../components/Expenses/ExpenseForm";
 import ExpenseList from "../components/Expenses/ExpenseList";
 import ExpenseTable from "../components/Expenses/ExpenseTable";
@@ -11,6 +19,7 @@ const ExpensePage = () => {
   const { isLoaded, isSignedIn } = useUser();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedTab, setSelectedTab] = useState(0);
   console.log(isSignedIn);
 
   const fetchExpenses = async () => {
@@ -48,6 +57,11 @@ const ExpensePage = () => {
     setExpenses(updatedExpenses);
   };
 
+  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    console.log(newValue);
+    setSelectedTab(newValue);
+  };
+
   if (!isLoaded) {
     return (
       <div className="flex flex-col h-[80vh] justify-center items-center">
@@ -65,29 +79,55 @@ const ExpensePage = () => {
   }
 
   return (
-    <Paper elevation={3} className="m-4 p-4">
-      <div className="flex gap-4">
-        <div className="flex flex-col gap-4">
-          <Typography variant="h4" component="h1" align="center" gutterBottom>
-            Daily Expenses
+    <Box m={4}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={4}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Add Expense
           </Typography>
-          <ExpenseForm onExpenseAdded={handleExpenseAdded} />
-        </div>
-        <div className="w-full">
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <ExpenseForm onExpenseAdded={handleExpenseAdded} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={8}>
           {loading ? (
             <div className="text-center mt-8">
               <CircularProgress />
             </div>
           ) : (
-            <ExpenseTable
-              expenses={expenses}
-              onExpenseUpdated={handleExpenseUpdated}
-              onExpenseDeleted={handleExpenseDeleted}
-            />
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <ExpenseTable
+                expenses={expenses}
+                onExpenseUpdated={handleExpenseUpdated}
+                onExpenseDeleted={handleExpenseDeleted}
+              />
+            </Paper>
           )}
-        </div>
-      </div>
-    </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              Monthly Expenses
+            </Typography>
+            <Tabs value={selectedTab} onChange={handleTabChange}>
+              <Tab label="January" />
+              <Tab label="February" />
+              <Tab label="March" />
+              <Tab label="April" />
+              <Tab label="May" />
+              <Tab label="June" />
+              <Tab label="July" />
+              <Tab label="August" />
+              <Tab label="September" />
+              <Tab label="October" />
+              <Tab label="November" />
+              <Tab label="December" />
+              <Tab label="YTD" />
+            </Tabs>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
