@@ -90,19 +90,14 @@ const ExpensePage = () => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
-          {loading ? (
-            <div className="text-center mt-8">
-              <CircularProgress />
-            </div>
-          ) : (
-            <Paper elevation={3} sx={{ p: 3 }}>
-              <ExpenseTable
-                expenses={expenses}
-                onExpenseUpdated={handleExpenseUpdated}
-                onExpenseDeleted={handleExpenseDeleted}
-              />
-            </Paper>
-          )}
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <ExpenseTable
+              loading={loading}
+              expenses={expenses}
+              onExpenseUpdated={handleExpenseUpdated}
+              onExpenseDeleted={handleExpenseDeleted}
+            />
+          </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper elevation={3} sx={{ p: 3 }}>

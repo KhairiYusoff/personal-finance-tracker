@@ -1,134 +1,104 @@
-import { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { useState } from "react";
 import { Expense } from "@/types/types";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditExpenseModal from "./EditExpenseModal";
 import DeleteExpenseModal from "./DeleteExpenseModal";
-import { format } from "date-fns";
 
 interface ExpenseTableProps {
+  loading: boolean;
   expenses: Expense[];
-  onExpenseUpdated: (expense: Expense) => void;
+  onExpenseUpdated: (updatedExpense: Expense) => void;
   onExpenseDeleted: (expenseId: string) => void;
 }
 
 const ExpenseTable = ({
+  loading,
   expenses,
   onExpenseUpdated,
   onExpenseDeleted,
 }: ExpenseTableProps) => {
-  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
-  const [deleteExpenseId, setDeleteExpenseId] = useState<string | null>(null);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const handleEditClick = (expense: Expense) => {
-    setEditingExpense(expense);
+  const handleEdit = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setEditModalOpen(true);
   };
 
-  const handleEditClose = () => {
-    setEditingExpense(null);
+  const handleDelete = (expenseId: string) => {
+    const selectedExpense = expenses.find(
+      (expense) => expense.id === expenseId
+    );
+    setSelectedExpense(selectedExpense || null);
+    setDeleteModalOpen(true);
   };
 
   const handleEditSubmit = (updatedExpense: Expense) => {
     onExpenseUpdated(updatedExpense);
-    setEditingExpense(null);
-  };
-
-  const handleDeleteClick = (expenseId: string) => {
-    setDeleteExpenseId(expenseId);
-  };
-
-  const handleDeleteClose = () => {
-    setDeleteExpenseId(null);
+    setSelectedExpense(null);
+    setEditModalOpen(false);
   };
 
   const handleDeleteConfirm = (expenseId: string) => {
     onExpenseDeleted(expenseId);
-    setDeleteExpenseId(null);
+    setSelectedExpense(null);
+    setDeleteModalOpen(false);
   };
 
-  const calculateTotal = (expenses: Expense[]) => {
-    return expenses.reduce((total, expense) => total + expense.amount, 0);
-  };
+  const columns: GridColDef[] = [
+    { field: "date", headerName: "Date", flex: 1 },
+    { field: "category", headerName: "Category", flex: 1 },
+    { field: "amount", headerName: "Amount", flex: 1 },
+    { field: "description", headerName: "Description", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 120,
+      renderCell: (params: GridRenderCellParams) => (
+        <>
+          <IconButton onClick={() => handleEdit(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDelete(params.row.id)}>
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">Date</TableCell>
-            <TableCell align="center">Category</TableCell>
-            <TableCell align="center">Description</TableCell>
-            <TableCell align="center">Amount</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {expenses.map((expense) => (
-            <TableRow key={expense.id}>
-              <TableCell align="center">
-                {format(new Date(expense.date), "dd-MM-yyyy")}
-              </TableCell>
-              <TableCell align="center">{expense.category}</TableCell>
-              <TableCell align="center">{expense.description}</TableCell>
-              <TableCell align="center">{expense.amount.toFixed(2)}</TableCell>
-              <TableCell align="center">
-                <IconButton
-                  edge="end"
-                  aria-label="edit"
-                  onClick={() => handleEditClick(expense)}
-                >
-                  <Edit />
-                </IconButton>
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleDeleteClick(expense.id)}
-                >
-                  <Delete />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-        <TableHead>
-          <TableRow>
-            <TableCell colSpan={3} align="right">
-              <Typography variant="subtitle1">Total:</Typography>
-            </TableCell>
-            <TableCell align="right">
-              <Typography variant="subtitle1">
-                {calculateTotal(expenses).toFixed(2)}
-              </Typography>
-            </TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-      </Table>
-
+    <div style={{ height: "80vh", width: "100%" }}>
+      <DataGrid
+        rows={expenses}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
+            },
+          },
+        }}
+        pageSizeOptions={[10, 20, 50]}
+        loading={loading}
+      />
       <EditExpenseModal
-        expense={editingExpense}
-        open={!!editingExpense}
-        onClose={handleEditClose}
+        expense={selectedExpense}
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
         onSubmit={handleEditSubmit}
       />
-
       <DeleteExpenseModal
-        expenseId={deleteExpenseId}
-        open={!!deleteExpenseId}
-        onClose={handleDeleteClose}
+        expenseId={selectedExpense?.id || null}
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
       />
-    </TableContainer>
+    </div>
   );
 };
 

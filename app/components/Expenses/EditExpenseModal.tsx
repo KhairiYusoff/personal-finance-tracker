@@ -31,11 +31,10 @@ const EditExpenseModal = ({
   const [formData, setFormData] = useState({
     date: expense?.date || "",
     category: expense?.category || "",
-    amount: expense?.amount.toString() || "",
+    amount: expense?.amount?.toString() || "",
     description: expense?.description || "",
   });
   const [loading, setLoading] = useState(false);
-  console.log(expense);
   useEffect(() => {
     if (expense) {
       setFormData({
