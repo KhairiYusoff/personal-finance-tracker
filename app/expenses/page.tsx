@@ -14,6 +14,8 @@ import ExpenseList from "../components/Expenses/ExpenseList";
 import ExpenseTable from "../components/Expenses/ExpenseTable";
 import { Expense } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
+import YTDExpenseTab from "../components/Expenses/YTDExpenseTab";
+import MonthlyExpenseTab from "../components/Expenses/MonthlyExpenseTab";
 
 const ExpensePage = () => {
   const { isLoaded, isSignedIn } = useUser();
@@ -119,6 +121,11 @@ const ExpensePage = () => {
               <Tab label="December" />
               <Tab label="YTD" />
             </Tabs>
+            {selectedTab === 12 ? (
+              <YTDExpenseTab expenses={expenses} />
+            ) : (
+              <MonthlyExpenseTab month={selectedTab + 1} expenses={expenses} />
+            )}
           </Paper>
         </Grid>
       </Grid>

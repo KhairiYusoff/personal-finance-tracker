@@ -1,4 +1,4 @@
-import { Income } from "@/types/types";
+import { Expense, Income } from "@/types/types";
 
 export const downloadPdfFile = async (pdfBlob: Blob, fileName: string) => {
   if (window.showSaveFilePicker) {
@@ -61,6 +61,20 @@ export const calculatePreviousMonthIncome = (
   );
   return previousMonthIncomes.reduce(
     (total, income) => total + income.amount,
+    0
+  );
+};
+
+export const calculatePreviousMonthExpense = (
+  month: number,
+  expenses: Expense[]
+) => {
+  const previousMonth = month === 1 ? 12 : month - 1;
+  const previousMonthExpenses = expenses.filter(
+    (expense) => new Date(expense.date).getMonth() + 1 === previousMonth
+  );
+  return previousMonthExpenses.reduce(
+    (total, expense) => total + expense.amount,
     0
   );
 };
