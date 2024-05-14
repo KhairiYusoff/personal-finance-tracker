@@ -112,7 +112,7 @@ const YTDIncomeTab = ({ incomes }: YTDIncomeTabProps) => {
             </Typography>
             <Box
               sx={{
-                maxWidth: "200px",
+                maxWidth: "350px",
                 margin: "0 auto",
                 position: "relative",
                 aspectRatio: "1",

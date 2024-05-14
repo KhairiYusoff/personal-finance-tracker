@@ -30,7 +30,7 @@ const YTDExpenseTab = ({ expenses }: YTDExpenseTabProps) => {
     return acc;
   }, {} as Record<string, number>);
 
-  const chartData = {
+  const data = {
     labels: Object.keys(expenseByCategory),
     datasets: [
       {
@@ -107,8 +107,8 @@ const YTDExpenseTab = ({ expenses }: YTDExpenseTabProps) => {
             <Typography variant="h6" gutterBottom>
               Expense Distribution YTD
             </Typography>
-            <Box sx={{ maxWidth: "400px", margin: "0 auto" }}>
-              <Pie data={chartData} />
+            <Box sx={{ maxWidth: "350px", margin: "0 auto" }}>
+              <Pie data={data} />
             </Box>
           </Box>
         </Grid>

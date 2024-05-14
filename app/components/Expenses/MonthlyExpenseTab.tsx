@@ -32,7 +32,7 @@ const MonthlyExpenseTab = ({ month, expenses }: MonthlyExpenseTabProps) => {
     return acc;
   }, {} as Record<string, number>);
 
-  const chartData = {
+  const data = {
     labels: Object.keys(expenseByCategory),
     datasets: [
       {
@@ -94,7 +94,7 @@ const MonthlyExpenseTab = ({ month, expenses }: MonthlyExpenseTabProps) => {
               Expense Distribution
             </Typography>
             <Box sx={{ maxWidth: "300px", margin: "0 auto" }}>
-              <Pie data={chartData} />
+              <Pie data={data} />
             </Box>
           </Box>
         </Grid>
