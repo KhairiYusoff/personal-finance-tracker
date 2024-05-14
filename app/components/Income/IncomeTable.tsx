@@ -8,12 +8,14 @@ import EditIncomeModal from "./EditIncomeModal";
 import DeleteIncomeModal from "./DeleteIncomeModal";
 
 interface IncomeTableProps {
+  loading: boolean;
   incomes: Income[];
   onIncomeUpdated: (updatedIncome: Income) => void;
   onIncomeDeleted: (incomeId: string) => void;
 }
 
 const IncomeTable = ({
+  loading,
   incomes,
   onIncomeUpdated,
   onIncomeDeleted,
@@ -69,13 +71,19 @@ const IncomeTable = ({
   ];
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: "80vh", width: "100%" }}>
       <DataGrid
         rows={incomes}
         columns={columns}
-        pagination
-        pageSize={5}
-        rowsPerPageOptions={[5, 10, 20]}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
+            },
+          },
+        }}
+        pageSizeOptions={[10, 20, 50]}
+        loading={loading}
       />
       <EditIncomeModal
         income={selectedIncome}

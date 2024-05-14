@@ -88,19 +88,14 @@ const IncomesPage = () => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
-          {loading ? (
-            <div className="text-center mt-8">
-              <CircularProgress />
-            </div>
-          ) : (
-            <Paper elevation={3} sx={{ p: 3 }}>
-              <IncomeTable
-                incomes={incomes}
-                onIncomeUpdated={handleIncomeUpdated}
-                onIncomeDeleted={handleIncomeDeleted}
-              />
-            </Paper>
-          )}
+          <Paper elevation={3} sx={{ p: 3 }}>
+            <IncomeTable
+              loading={loading}
+              incomes={incomes}
+              onIncomeUpdated={handleIncomeUpdated}
+              onIncomeDeleted={handleIncomeDeleted}
+            />
+          </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper elevation={3} sx={{ p: 3 }}>
