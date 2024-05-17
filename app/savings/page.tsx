@@ -1,255 +1,131 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Grid,
-  Typography,
-  Paper,
-  Button,
-  Select,
-  MenuItem,
-} from "@mui/material";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Pie } from "react-chartjs-2";
-import IncomeForm from "../components/Income/IncomeForm";
-import SavingsGoalForm from "../components/Savings/SavingsGoalForm";
-import { Expense, Income, SavingsGoal } from "@/types/types";
-import { useUser } from "@clerk/nextjs";
+import { Box, Typography } from "@mui/material";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { Expense, Income } from "@/types/types";
+import SavingsTable from "../components/Savings/SavingsTable";
+import SavingsChart from "../components/Savings/SavingsChart";
 
-const currentYear = new Date().getFullYear();
+interface SavingsData {
+  month: string;
+  income: number;
+  expense: number;
+  savings: number;
+}
 
-const Savings = () => {
-  const { isLoaded, isSignedIn } = useUser();
-  const [incomes, setIncomes] = useState<Income[]>([]);
-  const [savingsGoal, setSavingsGoal] = useState<SavingsGoal | null>(null);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [selectedYear, setSelectedYear] = useState(currentYear);
+interface transformedData {
+  description: string;
+  values: { month: string; value: number }[];
+}
+
+const SavingsPage = () => {
+  const [savingsData, setSavingsData] = useState<SavingsData[]>([]);
+  const [totalSavings, setTotalSavings] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSavingsData = async () => {
       try {
-        const [incomeResponse, savingsResponse, expenseResponse] =
-          await Promise.all([
-            fetch(`/api/income/${selectedYear}`),
-            fetch("/api/savings/latest"),
-            fetch(`/api/expenses/${selectedYear}`),
-          ]);
+        const [incomeResponse, expenseResponse] = await Promise.all([
+          fetch("/api/income"),
+          fetch("/api/expenses"),
+        ]);
 
-        if (incomeResponse.ok && savingsResponse.ok && expenseResponse.ok) {
-          const incomeData = await incomeResponse.json();
-          setIncomes(incomeData);
+        const incomeData: Income[] = await incomeResponse.json();
+        const expenseData: Expense[] = await expenseResponse.json();
 
-          const savingsData = await savingsResponse.json();
-          setSavingsGoal(savingsData);
+        const currentYear = new Date().getFullYear();
+        const months = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
 
-          const expenseData = await expenseResponse.json();
-          setExpenses(expenseData);
-        } else {
-          console.error("Error fetching data");
-        }
+        const savingsData = months.map((month, index) => {
+          const monthIncome = incomeData
+            .filter(
+              (income) =>
+                new Date(income.date).getMonth() === index &&
+                new Date(income.date).getFullYear() === currentYear
+            )
+            .reduce((total, income) => total + income.amount, 0);
+
+          const monthExpense = expenseData
+            .filter(
+              (expense) =>
+                new Date(expense.date).getMonth() === index &&
+                new Date(expense.date).getFullYear() === currentYear
+            )
+            .reduce((total, expense) => total + expense.amount, 0);
+
+          const savings = monthIncome - monthExpense;
+
+          return {
+            month,
+            income: monthIncome,
+            expense: monthExpense,
+            savings,
+          };
+        });
+
+        setSavingsData(savingsData);
+        const totalSavings = savingsData.reduce(
+          (total, item) => total + item.savings,
+          0
+        );
+        setTotalSavings(totalSavings);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching savings data:", error);
       }
     };
 
-    fetchData();
-  }, [selectedYear]);
+    fetchSavingsData();
+  }, []);
 
-  const handleIncomeAdded = (income: Income) => {
-    setIncomes([...incomes, income]);
-  };
-
-  const handleSavingsGoalAdded = (savingsGoal: SavingsGoal) => {
-    setSavingsGoal(savingsGoal);
-  };
-
-  const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
-  const totalExpenses = expenses.reduce(
-    (sum, expense) => sum + expense.amount,
-    0
-  );
-  const netIncome = totalIncome - totalExpenses;
-  const savingsProgress = savingsGoal
-    ? (savingsGoal.currentAmount / savingsGoal.targetAmount) * 100
-    : 0;
-
-  const renderIncomeChart = () => {
-    const incomeSourceRevenue: { [key: string]: number } = {};
-    incomes.forEach((income) => {
-      if (incomeSourceRevenue[income.source]) {
-        incomeSourceRevenue[income.source] += income.amount;
-      } else {
-        incomeSourceRevenue[income.source] = income.amount;
-      }
-    });
-
-    const data = {
-      labels: Object.keys(incomeSourceRevenue),
-      datasets: [
-        {
-          data: Object.values(incomeSourceRevenue),
-          backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#4BC0C0",
-            "#9966FF",
-            "#FF9F40",
-          ],
-        },
-      ],
-    };
-
-    return <Pie data={data} />;
-  };
-
-  const renderExpenseChart = () => {
-    const categoryExpenses: { [key: string]: number } = {};
-    expenses.forEach((expense) => {
-      if (categoryExpenses[expense.category]) {
-        categoryExpenses[expense.category] += expense.amount;
-      } else {
-        categoryExpenses[expense.category] = expense.amount;
-      }
-    });
-
-    const data = {
-      labels: Object.keys(categoryExpenses),
-      datasets: [
-        {
-          data: Object.values(categoryExpenses),
-          backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#4BC0C0",
-            "#9966FF",
-            "#FF9F40",
-          ],
-        },
-      ],
-    };
-
-    return <Pie data={data} />;
-  };
-
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
-
-  if (!isSignedIn) {
-    return <div>Please sign in to access this page.</div>;
-  }
+  const transformedData: transformedData[] = [
+    {
+      description: "Income",
+      values: savingsData.map((item) => ({
+        month: item.month,
+        value: item.income,
+      })),
+    },
+    {
+      description: "Expense",
+      values: savingsData.map((item) => ({
+        month: item.month,
+        value: item.expense,
+      })),
+    },
+    {
+      description: "Savings",
+      values: savingsData.map((item) => ({
+        month: item.month,
+        value: item.savings,
+      })),
+    },
+  ];
 
   return (
     <Box m={4}>
       <Typography variant="h4" align="center" gutterBottom>
-        Financial Summary for {selectedYear}
+        Savings Overview
       </Typography>
-
-      <Grid container spacing={3}>
-        {/* Left Side: Forms */}
-        {/* <Grid item xs={12} md={6}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Income
-                </Typography>
-                <IncomeForm onIncomeAdded={handleIncomeAdded} />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Savings Goal
-                </Typography>
-                <SavingsGoalForm onSavingsGoalAdded={handleSavingsGoalAdded} />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Grid> */}
-
-        {/* Right Side: Charts */}
-        <Grid item xs={12} md={6}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Income Breakdown
-                </Typography>
-                <Box sx={{ width: "100%", height: 300 }}>
-                  {renderIncomeChart()}
-                </Box>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  Expense Breakdown
-                </Typography>
-                <Box sx={{ width: "100%", height: 300 }}>
-                  {renderExpenseChart()}
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Financial Overview
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <Typography variant="subtitle1">Total Income</Typography>
-                <Typography variant="h5">${totalIncome.toFixed(2)}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Typography variant="subtitle1">Total Expenses</Typography>
-                <Typography variant="h5">
-                  ${totalExpenses.toFixed(2)}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Typography variant="subtitle1">Savings</Typography>
-                <Typography variant="h5">${netIncome.toFixed(2)}</Typography>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Typography variant="subtitle1">Savings Progress</Typography>
-                <Typography variant="h5">
-                  {savingsProgress.toFixed(2)}%
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Select Year
-            </Typography>
-            <Select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-            >
-              {Array.from({ length: 5 }, (_, i) => currentYear - i).map(
-                (year) => (
-                  <MenuItem key={year} value={year}>
-                    {year}
-                  </MenuItem>
-                )
-              )}
-            </Select>
-          </Paper>
-        </Grid>
-      </Grid>
+      <SavingsTable data={transformedData} />
+      <SavingsChart data={savingsData} />
+      <Typography variant="h6" align="center">
+        Total Savings: ${totalSavings.toFixed(2)}
+      </Typography>
     </Box>
   );
 };
 
-export default Savings;
+export default SavingsPage;
