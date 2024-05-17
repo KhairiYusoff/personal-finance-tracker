@@ -21,7 +21,6 @@ const IncomeTable = ({
   onIncomeDeleted,
 }: IncomeTableProps) => {
   const [selectedIncome, setSelectedIncome] = useState<Income | null>(null);
-  console.log(selectedIncome);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 

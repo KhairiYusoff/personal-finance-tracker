@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { Expense, Income } from "@/types/types";
 import SavingsTable from "../components/Savings/SavingsTable";
 import SavingsChart from "../components/Savings/SavingsChart";
+import { useUser } from "@clerk/nextjs";
 
 interface SavingsData {
   month: string;
@@ -19,6 +19,7 @@ interface transformedData {
 }
 
 const SavingsPage = () => {
+  const { isLoaded, isSignedIn } = useUser();
   const [savingsData, setSavingsData] = useState<SavingsData[]>([]);
   const [totalSavings, setTotalSavings] = useState(0);
 
@@ -113,6 +114,14 @@ const SavingsPage = () => {
       })),
     },
   ];
+
+  if (!isLoaded) {
+    return (
+      <div className="flex flex-col h-[80vh] justify-center items-center">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <Box m={4}>
