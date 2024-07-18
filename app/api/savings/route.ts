@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
         targetAmount: parseFloat(targetAmount),
         currentAmount: 0,//default value
         description,
+        user: { connect: { id: userId } }
       },
     });
     return NextResponse.json(savingsGoal, { status: 201 });
