@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       data: {
         userId,
         targetAmount: parseFloat(targetAmount),
+        currentAmount: 0,//default value
         description,
       },
     });
